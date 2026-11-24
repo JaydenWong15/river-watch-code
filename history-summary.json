@@ -1,0 +1,552 @@
+{
+  "source": "Open-Meteo Flood API (GloFAS v4), CC BY 4.0",
+  "period": "2016-01-01 to 2025-12-31",
+  "built": "2026-11-24T09:35:18.940Z",
+  "percentileMethod": "linear interpolation (PERCENTILE.INC)",
+  "towns": {
+    "Clonmel": {
+      "river": "Suir",
+      "townLatLon": [
+        52.355,
+        -7.704
+      ],
+      "gridCell": [
+        52.375,
+        -7.724991
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 28.37,
+      "median": 21.65,
+      "p95": 66.3,
+      "p99": 107.88,
+      "max": 237.23,
+      "events": 11,
+      "first4Winters": 2,
+      "last4Winters": 6,
+      "winters": {
+        "2016/17": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2017/18": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2018/19": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2019/20": {
+          "events": 2,
+          "daysAbove": 4,
+          "longestRun": 2
+        },
+        "2020/21": {
+          "events": 3,
+          "daysAbove": 6,
+          "longestRun": 3
+        },
+        "2021/22": {
+          "events": 2,
+          "daysAbove": 2,
+          "longestRun": 1
+        },
+        "2022/23": {
+          "events": 1,
+          "daysAbove": 3,
+          "longestRun": 3
+        },
+        "2023/24": {
+          "events": 2,
+          "daysAbove": 3,
+          "longestRun": 2
+        },
+        "2024/25": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        }
+      }
+    },
+    "Fermoy": {
+      "river": "Blackwater",
+      "townLatLon": [
+        52.138,
+        -8.275
+      ],
+      "gridCell": [
+        52.125,
+        -8.324997
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 24.7,
+      "median": 18.68,
+      "p95": 58.84,
+      "p99": 95.16,
+      "max": 228.09,
+      "events": 10,
+      "first4Winters": 1,
+      "last4Winters": 6,
+      "winters": {
+        "2016/17": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2017/18": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2018/19": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2019/20": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2020/21": {
+          "events": 3,
+          "daysAbove": 9,
+          "longestRun": 4
+        },
+        "2021/22": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2022/23": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2023/24": {
+          "events": 2,
+          "daysAbove": 4,
+          "longestRun": 3
+        },
+        "2024/25": {
+          "events": 3,
+          "daysAbove": 6,
+          "longestRun": 3
+        }
+      }
+    },
+    "Mallow": {
+      "river": "Blackwater",
+      "townLatLon": [
+        52.133,
+        -8.646
+      ],
+      "gridCell": [
+        52.125,
+        -8.624985
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 18.48,
+      "median": 13.96,
+      "p95": 44.6,
+      "p99": 71.33,
+      "max": 207.45,
+      "events": 13,
+      "first4Winters": 2,
+      "last4Winters": 8,
+      "winters": {
+        "2016/17": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2017/18": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2018/19": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2019/20": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2020/21": {
+          "events": 3,
+          "daysAbove": 6,
+          "longestRun": 3
+        },
+        "2021/22": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2022/23": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2023/24": {
+          "events": 3,
+          "daysAbove": 5,
+          "longestRun": 3
+        },
+        "2024/25": {
+          "events": 3,
+          "daysAbove": 6,
+          "longestRun": 3
+        }
+      }
+    },
+    "Bandon": {
+      "river": "Bandon",
+      "townLatLon": [
+        51.746,
+        -8.739
+      ],
+      "gridCell": [
+        51.725006,
+        -8.774994
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 7.15,
+      "median": 4.79,
+      "p95": 19.18,
+      "p99": 34.44,
+      "max": 86.3,
+      "events": 12,
+      "first4Winters": 2,
+      "last4Winters": 8,
+      "winters": {
+        "2016/17": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2017/18": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2018/19": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2019/20": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2020/21": {
+          "events": 2,
+          "daysAbove": 5,
+          "longestRun": 3
+        },
+        "2021/22": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2022/23": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2023/24": {
+          "events": 3,
+          "daysAbove": 6,
+          "longestRun": 3
+        },
+        "2024/25": {
+          "events": 5,
+          "daysAbove": 8,
+          "longestRun": 2
+        }
+      }
+    },
+    "Enniscorthy": {
+      "river": "Slaney",
+      "townLatLon": [
+        52.501,
+        -6.559
+      ],
+      "gridCell": [
+        52.525,
+        -6.574997
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 13.47,
+      "median": 10.67,
+      "p95": 29.86,
+      "p99": 52.39,
+      "max": 124.03,
+      "events": 7,
+      "first4Winters": 2,
+      "last4Winters": 4,
+      "winters": {
+        "2016/17": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2017/18": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2018/19": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2019/20": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2020/21": {
+          "events": 1,
+          "daysAbove": 8,
+          "longestRun": 8
+        },
+        "2021/22": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2022/23": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2023/24": {
+          "events": 2,
+          "daysAbove": 4,
+          "longestRun": 2
+        },
+        "2024/25": {
+          "events": 2,
+          "daysAbove": 4,
+          "longestRun": 2
+        }
+      }
+    },
+    "Ennis": {
+      "river": "Fergus",
+      "townLatLon": [
+        52.843,
+        -8.986
+      ],
+      "gridCell": [
+        52.825005,
+        -9.024994
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 13.07,
+      "median": 10.04,
+      "p95": 31.09,
+      "p99": 45.39,
+      "max": 65.22,
+      "events": 17,
+      "first4Winters": 7,
+      "last4Winters": 9,
+      "winters": {
+        "2016/17": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2017/18": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2018/19": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2019/20": {
+          "events": 5,
+          "daysAbove": 15,
+          "longestRun": 8
+        },
+        "2020/21": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2021/22": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2022/23": {
+          "events": 3,
+          "daysAbove": 6,
+          "longestRun": 3
+        },
+        "2023/24": {
+          "events": 5,
+          "daysAbove": 7,
+          "longestRun": 2
+        },
+        "2024/25": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        }
+      }
+    },
+    "Athlone": {
+      "river": "Shannon",
+      "townLatLon": [
+        53.423,
+        -7.94
+      ],
+      "gridCell": [
+        53.425003,
+        -7.974991
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 76.15,
+      "median": 67.08,
+      "p95": 142.35,
+      "p99": 186.71,
+      "max": 254.27,
+      "events": 1,
+      "first4Winters": 1,
+      "last4Winters": 0,
+      "winters": {
+        "2016/17": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2017/18": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2018/19": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2019/20": {
+          "events": 1,
+          "daysAbove": 3,
+          "longestRun": 3
+        },
+        "2020/21": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2021/22": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2022/23": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2023/24": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2024/25": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        }
+      }
+    },
+    "Carrick-on-Shannon": {
+      "river": "Shannon",
+      "townLatLon": [
+        53.947,
+        -8.087
+      ],
+      "gridCell": [
+        53.925003,
+        -8.074997
+      ],
+      "days": 3653,
+      "missing": 0,
+      "mean": 27.37,
+      "median": 21.86,
+      "p95": 62.24,
+      "p99": 88.84,
+      "max": 133.59,
+      "events": 12,
+      "first4Winters": 4,
+      "last4Winters": 3,
+      "winters": {
+        "2016/17": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2017/18": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2018/19": {
+          "events": 1,
+          "daysAbove": 3,
+          "longestRun": 3
+        },
+        "2019/20": {
+          "events": 2,
+          "daysAbove": 9,
+          "longestRun": 6
+        },
+        "2020/21": {
+          "events": 5,
+          "daysAbove": 11,
+          "longestRun": 3
+        },
+        "2021/22": {
+          "events": 1,
+          "daysAbove": 1,
+          "longestRun": 1
+        },
+        "2022/23": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        },
+        "2023/24": {
+          "events": 0,
+          "daysAbove": 0,
+          "longestRun": 0
+        },
+        "2024/25": {
+          "events": 1,
+          "daysAbove": 2,
+          "longestRun": 2
+        }
+      }
+    }
+  }
+}
