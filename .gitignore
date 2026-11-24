@@ -1,7 +1,7 @@
 FLAGS-LOG.md
 CHANGES-LOG.md
 CA2_River_Watch_Rubric.md
-mockup.html
+mockup*.html
 .claude/
 worker/.wrangler/
 node_modules/
