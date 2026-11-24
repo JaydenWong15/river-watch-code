@@ -774,11 +774,13 @@ async function ask(q) {
     wait.textContent = "Thinking…";
     const system = buildSystem(LAST, q);
     const messages = [...HISTORY_CHAT, { role: "user", content: q }];
-    const { text } = await callClaude(system, messages);
+    const { text, usage } = await callClaude(system, messages);
+    const inT = (usage?.input_tokens || 0) + (usage?.cache_read_input_tokens || 0) + (usage?.cache_creation_input_tokens || 0), outT = usage?.output_tokens || 0;
+    const cost = (inT * 0.10 + outT * 0.50) / 1e6;   // Claude Haiku 5.5: $0.10 / $0.50 per million tokens (checked 24 Nov 2026)
     HISTORY_CHAT.push({ role: "user", content: q }, { role: "assistant", content: text });
     while (HISTORY_CHAT.length > 12) HISTORY_CHAT.splice(0, 2);
     const used = [`Forecast ${timeIE(LAST.forecast?.fetched)}`, `Warnings ${timeIE(LAST.warnings?.fetched)}`, `Sheet ${timeIE(LAST.sheet.fetched)}`];
-    wait.innerHTML = esc(text).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>") + `<div class="src">Live data read for this answer: ${used.join(" · ")}${LAST.plan.rehearsals.length ? " · rehearsal values in use" : ""}${RW.parseWhatIf(q, LAST.sheet.rows) ? " · what-if computed by code" : ""}</div>`;
+    wait.innerHTML = esc(text).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>") + `<div class="src">Live data read for this answer: ${used.join(" · ")}${LAST.plan.rehearsals.length ? " · rehearsal values in use" : ""}${RW.parseWhatIf(q, LAST.sheet.rows) ? " · what-if computed by code" : ""} · ${inT.toLocaleString()} in / ${outT.toLocaleString()} out tokens ≈ $${cost.toFixed(4)}</div>`;
   } catch (e) {
     wait.className = "msg e"; wait.textContent = e.message;
   } finally { STATE.busy = false; $("askbtn").disabled = false; }
