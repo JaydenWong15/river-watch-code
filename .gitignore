@@ -6,3 +6,4 @@ mockup.html
 worker/.wrangler/
 node_modules/
 .env
+evidence/
