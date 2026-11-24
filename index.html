@@ -33,6 +33,11 @@ a{color:var(--teal)}
 .panel{margin-top:-120px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 20px 50px rgba(15,37,55,.15)}
 .plan-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;border-radius:16px;padding:17px;font-size:19px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#0d9488,#0284c7);box-shadow:0 8px 24px rgba(2,132,199,.3);transition:transform .3s var(--ease),box-shadow .3s var(--ease),opacity .3s}
 .plan-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(2,132,199,.4)}
+.actions{display:flex;gap:10px}
+.actions .plan-btn{flex:1;width:auto}
+.sheet-btn{display:flex;align-items:center;justify-content:center;gap:8px;flex:none;border-radius:16px;padding:0 20px;font-size:16px;font-weight:700;color:#0f5f58;text-decoration:none;background:#f0fdfa;border:1.5px solid #5eead4;transition:transform .3s var(--ease),background .3s var(--ease),box-shadow .3s var(--ease)}
+.sheet-btn:hover{transform:translateY(-2px);background:#ccfbf1;box-shadow:0 8px 20px rgba(13,148,136,.18)}
+@media (max-width:600px){.sheet-btn{padding:0 14px;font-size:15px}}
 .plan-btn:disabled,.send:disabled{opacity:.6;cursor:wait;transform:none}
 .ask{display:flex;gap:10px;margin-top:14px}
 .ask input{flex:1;min-width:0;background:#fff;border:1px solid var(--line2);color:var(--text);border-radius:14px;padding:13px 16px;font-size:16px;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
@@ -186,7 +191,10 @@ dialog input{width:100%;margin:8px 0;padding:10px;border:1px solid var(--line2);
 
 <main class="wrap">
   <div class="panel">
+    <div class="actions">
     <button class="plan-btn" id="planbtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 12c2 0 2-2 4.5-2S10 12 12 12s2.5-2 4.5-2S19 12 21 12"/><path d="M3 17c2 0 2-2 4.5-2s2.5 2 4.5 2 2.5-2 4.5-2 2.5 2 4.5 2"/></svg>Get tonight's plan</button>
+      <a class="sheet-btn" id="sheetbtn" target="_blank" rel="noopener" title="Open the Team Sheet in a new tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg>Team Sheet<span class="sr"> (opens in a new tab)</span></a>
+    </div>
     <form class="ask" id="askform">
       <label class="sr" for="q">Ask River Watch</label>
       <input id="q" autocomplete="off" placeholder="Ask River Watch…">
@@ -903,7 +911,7 @@ async function refresh() {
   try { LAST = await readAll(); renderPlan(LAST); renderWarnings(LAST); }
   catch (e) { $("notes").innerHTML = `<div class="note err">${esc(e.message)}</div>`; $("act").innerHTML = `<div class="empty" style="grid-column:1/-1">Couldn't build tonight's plan. See the note above.</div>`; }
 }
-$("sheetlink").href = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`;
+$("sheetlink").href = $("sheetbtn").href = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`;
 keyState();
 getHistory().then(renderStudy).catch(e => $("studybox").textContent = "History summary unavailable: " + e.message);
 refresh();
