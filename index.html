@@ -124,9 +124,9 @@ h2.sec{font-size:13px;color:var(--dim);font-weight:700;margin:30px 0 10px;letter
 .decided{font-size:13px;font-weight:600}
 .decided.ok{color:var(--ok)}.decided.ov{color:var(--warn)}
 .why-t{margin-left:auto;background:none;border:0;color:var(--dim);font-size:13px;cursor:pointer}
-.whybox{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
-.whybox>div{overflow:hidden;color:var(--muted);font-size:14px}
-.whybox.open{grid-template-rows:1fr}
+.whybox{display:none}
+.whybox>div{color:var(--muted);font-size:14px}
+.whybox.open{display:block;animation:rise .35s var(--ease)}
 .whybox p{margin:10px 0 0}
 .whybox .src{font-size:12px;color:var(--dim)}
 .ovr{margin-top:10px;display:none;gap:6px;flex-direction:column}
