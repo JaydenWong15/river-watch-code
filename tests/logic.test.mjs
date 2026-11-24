@@ -113,6 +113,12 @@ test("What-if parser: Suir at Clonmel 150 -> Clonmel only", () => {
   assert.deepEqual(RW.parseWhatIf("what if the Shannon hits 300?", rows()).towns, ["Athlone", "Carrick-on-Shannon"]);
   assert.equal(RW.parseWhatIf("Why is Fermoy at that level?", rows()), null);
 });
+test("What-if scenario is labelled what-if, not a Sheet rehearsal", () => {
+  const wi = RW.parseWhatIf("What if the Suir at Clonmel reaches 150 m³/s?", rows());
+  const p = plan({ rows: RW.scenarioRows(rows(), wi) });
+  const c = T(p, "Clonmel"); assert.equal(c.action, "Barriers"); assert.equal(c.peakSource, "what-if"); assert.equal(p.rehearsals.length, 0);
+  assert.deepEqual(T(p, "Fermoy").coveredBy, ["Clonmel crew", "Mallow crew"]);
+});
 test("Study answer comes from stored history", () => {
   const s = RW.studyAnswer(history); console.log("   study:", s.top, s.topEvents, "first4", s.first4, "last4", s.last4, s.trend);
   assert.equal(s.top, Object.entries(history.towns).sort((a, b) => b[1].events - a[1].events)[0][0]);
