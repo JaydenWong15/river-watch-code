@@ -164,6 +164,13 @@ details.box[open]>summary:after{transform:rotate(90deg)}
 .srcs{padding-left:18px;margin:6px 0}
 .srcs li{margin-bottom:5px}
 .small{font-size:12.5px;color:var(--dim)}
+.srcstat{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.srcstat span{display:inline-flex;align-items:center;gap:6px;background:#f8fbfd;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px}
+.srcstat i{width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block}
+.srcstat i.bad{background:#e11d48}
+.work{margin:8px 0 0;padding:8px 10px;background:#f8fbfd;border-radius:10px;font-size:13px;color:var(--muted)}
+.work b{color:var(--text)}
+.tbl td.pk{font-weight:700;color:var(--text)}
 /* skeleton */
 .sk{background:linear-gradient(90deg,#e8eff4 25%,#f5f9fb 50%,#e8eff4 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--r);height:300px}
 @keyframes shimmer{to{background-position:-200% 0}}
@@ -245,15 +252,19 @@ dialog input{width:100%;margin:8px 0;padding:10px;border:1px solid var(--line2);
   <details class="box" id="data">
     <summary>Sources and checks<span class="chip">for checking</span></summary>
     <div class="boxin">
+      <div class="srcstat" id="srcstat"></div>
+      <h4>Tonight's working, every town</h4>
+      <div class="scroll"><table class="tbl" id="worktbl"><tbody><tr><td class="small">Loading…</td></tr></tbody></table></div>
       <h4>Where every number comes from</h4>
       <ol class="srcs">
         <li><b>River flow forecast:</b> Open-Meteo Flood API (GloFAS v4), <a href="https://open-meteo.com/en/docs/flood-api" target="_blank" rel="noopener">open-meteo.com</a>, CC BY 4.0. Daily <code>river_discharge</code> (m³/s) for today and the next 2 days (Europe/Dublin). Read live every time.</li>
         <li><b>Rain warnings:</b> Met Éireann <a href="https://www.met.ie/Open_Data/json/warning_IRELAND.json" target="_blank" rel="noopener">warning_IRELAND.json</a>, CC BY 4.0. Counties come as codes in <code>regions</code> (e.g. Cork = EI04, Roscommon = EI24). Read live every time.</li>
         <li><b>Team Sheet:</b> <a id="sheetlink" target="_blank" rel="noopener">River Watch Team Sheet</a> (Google Sheets, read live every time).</li>
         <li><b>High and flood marks:</b> <a href="history-summary.json" target="_blank">history-summary.json</a>, built once from the same API, daily flow 1 Jan 2016 – 31 Dec 2025 (3,653 days per town). High mark = 95th percentile (only 5% of days were higher). Flood mark = 99th percentile (only 1% of days were higher).</li>
+        <li><b>River check:</b> each town's model point was checked against its official OPW gauge on the named river (<a href="https://waterlevel.ie/" target="_blank" rel="noopener">waterlevel.ie</a>, Office of Public Works); every point is within 4 km of the gauge and the flows grow downstream as they should.</li>
         <li><b>AI:</b> Anthropic Claude Haiku 5.5 explains the plan. The levels, crews and counts are worked out by code, not by the AI.</li>
       </ol>
-      <h4>Ten-year summary (one row per town)</h4>
+      <h4>Ten-year summary and river check (one row per town)</h4>
       <div class="scroll"><table class="tbl" id="histtbl"></table></div>
       <h4>Warnings in the Met Éireann feed now</h4>
       <div id="warnlist" class="small"></div>
@@ -563,6 +574,39 @@ const PHOTOS = {
   "Athlone": { url: C + "2/21/Athlone_-_Shannon_Road_Bridge_-_20190921130455.jpg/960px-Athlone_-_Shannon_Road_Bridge_-_20190921130455.jpg", page: "File:Athlone_-_Shannon_Road_Bridge_-_20190921130455.jpg", by: "Dvcireland", lic: "CC BY-SA 4.0" },
   "Carrick-on-Shannon": { url: C + "e/e6/River_Shannon_at_Carrick-on-Shannon%2C_Co._Leitrim_-_geograph.org.uk_-_2729215.jpg/960px-River_Shannon_at_Carrick-on-Shannon%2C_Co._Leitrim_-_geograph.org.uk_-_2729215.jpg", page: "File:River_Shannon_at_Carrick-on-Shannon,_Co._Leitrim_-_geograph.org.uk_-_2729215.jpg", by: "P L Chadwick", lic: "CC BY-SA 2.0" },
 };
+// OPW hydrometric gauges on each town's named river (waterlevel.ie, checked 24 Nov 2026)
+const GAUGES = {
+  "Clonmel": { ref: "16011", name: "Clonmel", ll: [52.352, -7.695] },
+  "Fermoy": { ref: "18107", name: "Fermoy Bridge D/S", ll: [52.140, -8.275] },
+  "Mallow": { ref: "18056", name: "Mallow Town Bridge U/S", ll: [52.132, -8.642] },
+  "Bandon": { ref: "20001", name: "Bandon", ll: [51.747, -8.732] },
+  "Enniscorthy": { ref: "12002", name: "Enniscorthy", ll: [52.502, -6.567] },
+  "Ennis": { ref: "27066", name: "Ennis Bridge", ll: [52.847, -8.982] },
+  "Athlone": { ref: "26027", name: "Athlone", ll: [53.422, -7.941] },
+  "Carrick-on-Shannon": { ref: "26324", name: "Carrick-On-Shannon", ll: [53.943, -8.096] },
+};
+function kmBetween(a, b) { const R = 6371, r = x => x * Math.PI / 180, dl = r(b[0] - a[0]), dn = r(b[1] - a[1]); const s = Math.sin(dl / 2) ** 2 + Math.cos(r(a[0])) * Math.cos(r(b[0])) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(s)); }
+// The three forecast days the peak was taken from (display only; the rules live in the LOGIC block)
+function threeDays(t, d) {
+  const f = d.forecast?.byTown?.[t.town]; if (!f) return [];
+  return t.forecastDays.map(day => ({ day, v: f.daily.river_discharge[f.daily.time.indexOf(day)] }));
+}
+function workingHtml(t, d) {
+  const days = threeDays(t, d), g = GAUGES[t.town], h = HISTORY?.towns[t.town];
+  let s = days.length ? `<b>Forecast:</b> ${days.map(x => `${dateIE(x.day)} ${RW.fmt(x.v)}`).join(" · ")} m³/s → highest <b>${RW.fmt(t.forecastPeak)}</b>.` : "<b>Forecast:</b> not available.";
+  if (t.peakSource === "rehearsal") s += ` <b>Used instead:</b> ${RW.fmt(t.peak)} (practice value, Sheet).`;
+  s += `<br><b>Compared with:</b> high mark ${RW.fmt(t.p95)}, flood mark ${RW.fmt(t.p99)} → ${esc(lvlLabel(t))}${t.warning ? ` (raised one level by ${esc(t.warning)} warning)` : ""}.`;
+  if (g && h) s += `<br><b>River point:</b> ${h.gridCell.map(x => x.toFixed(3)).join(", ")}, ${kmBetween(g.ll, h.gridCell).toFixed(1)} km from OPW gauge ${g.ref} ${esc(g.name)} on the ${esc(t.river)}.`;
+  return `<div class="work">${s}</div>`;
+}
+function renderWorking(d) {
+  const p = d.plan, ok = (x, label) => `<span><i class="${x ? "" : "bad"}"></i>${label}</span>`;
+  $("srcstat").innerHTML = ok(d.forecast, `River forecast · read ${timeIE(d.forecast?.fetched)}`) + ok(d.warnings, `Met Éireann warnings · ${d.warnings ? d.warnings.list.length + " active · read " + timeIE(d.warnings.fetched) : "not read"}`) + ok(d.sheet, `Team Sheet · read ${timeIE(d.sheet?.fetched)}`) + ok(HISTORY, "10-year history · stored");
+  const dayNames = (p.towns.find(t => t.forecastDays?.length)?.forecastDays || []).map(dateIE);
+  $("worktbl").innerHTML = `<thead><tr><th>Town</th>${dayNames.map(n => `<th>${esc(n)}</th>`).join("")}<th>Peak used</th><th>High / flood mark</th><th>Warning</th><th>Level</th></tr></thead><tbody>` +
+    p.towns.map(t => { const days = threeDays(t, d); return `<tr><td>${esc(t.town)}</td>${dayNames.map((_, i) => `<td>${days[i] ? RW.fmt(days[i].v) : "–"}</td>`).join("")}<td class="pk">${RW.fmt(t.peak)}${t.peakSource === "rehearsal" ? " (practice)" : ""}</td><td>${RW.fmt(t.p95)} / ${RW.fmt(t.p99)}</td><td>${t.warning ? esc(t.warning) + (t.warningSource === "rehearsal" ? " (practice)" : "") : (t.yellowWarnings.length ? "yellow (no change)" : "none")}</td><td>${lvlIcon(t)} ${esc(lvlLabel(t))}</td></tr>`; }).join("") +
+    `</tbody><caption class="small" style="caption-side:bottom;text-align:left;padding-top:6px">Daily river flow in m³/s from the Open-Meteo Flood API, read ${timeIE(d.forecast?.fetched)}. Peak = highest of the three days (or the Sheet's practice value). Warnings counted for ${p.towns.filter(t => t.counties.length > 1).map(t => t.town + " (" + t.counties.join(" + ") + ")").join(", ")} as two-county towns.</caption>`;
+}
 const EXTRA_CREDITS = [
   { what: "Header: River Suir, Old Bridge and weir, Clonmel", page: "File:Clonmel_-_R_Suir,_Old_Bridge_%5E_weir_-_geograph.org.uk_-_6008162.jpg", by: "Colin Park", lic: "CC BY-SA 2.0" },
   { what: "Demountable flood barriers, 2014", page: "File:Demountable_flood_barriers,_2014_-_geograph.org.uk_-_3850046.jpg", by: "Richard Law", lic: "CC BY-SA 2.0" },
@@ -683,7 +727,7 @@ function renderPlan(d) {
       <p class="action">${esc(shortAction(t))}</p>
       <div class="tags">${tags(t)}</div>
       <footer>${decisionHtml(t, lastDec(t.town))}<button class="why-t" data-why type="button" aria-expanded="false">Why? ▾</button></footer>
-      <div class="whybox"><div><p>${plainWhy(t)}</p><p class="src">Forecast ${timeIE(d.forecast?.fetched)} · warnings ${timeIE(d.warnings?.fetched)} · Sheet ${timeIE(d.sheet.fetched)}</p></div></div>
+      <div class="whybox"><div><p>${plainWhy(t)}</p>${workingHtml(t, d)}<p class="src">Forecast ${timeIE(d.forecast?.fetched)} · warnings ${timeIE(d.warnings?.fetched)} · Sheet ${timeIE(d.sheet.fetched)}</p></div></div>
       ${overrideForm(t)}
       </div></article>`;
   }).join("") : `<div class="empty" style="grid-column:1/-1">Nothing needs action tonight. All rivers are under their high marks.</div>`;
@@ -695,7 +739,7 @@ function renderPlan(d) {
   }).join("") || `<div class="empty" style="grid-column:1/-1">No town is all clear tonight.</div>`;
   $("crews").innerHTML = p.crews.map(c => `<div class="crew"><span class="dot ${c.towns.length ? "on" : ""}"></span><b>${esc(c.base)}</b><span>${c.towns.length ? "→ " + c.towns.map(esc).join(", ") : "free"}${c.restriction ? " · " + esc(c.base) + " only" : ""}</span></div>`).join("");
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll(".tube.pre").forEach(el => el.classList.remove("pre"))));
-  renderLog(); renderMap(p);
+  renderLog(); renderMap(p); renderWorking(d);
 }
 function overrideForm(t) {
   return `<div class="ovr" data-form="${esc(t.town)}">
@@ -713,9 +757,12 @@ function renderStudy(h) {
     <p>Last four winters: <b>${s.last4}</b> events. First four: <b>${s.first4}</b>. So ${s.trend} events lately.</p>
     <div class="bars">${s.rows.map(r => `<div class="row ${r.town === s.top ? "top" : ""}"><span>${esc(r.town)}</span><div><div class="t" style="width:${r.events / max * 100}%"></div></div><b>${r.events}</b></div>`).join("")}</div>
     <p class="small"><b>What this can't tell you:</b> ${esc(s.limit)}</p>
-    <p class="small">An event = a run of days in a row at or above the town's flood mark, between 1 October and 31 March. Source: history-summary.json (Open-Meteo / GloFAS, 2016–2025).</p>`;
-  $("histtbl").innerHTML = `<thead><tr><th>Town</th><th>River</th><th>Grid point used</th><th>Average</th><th>High mark (p95)</th><th>Flood mark (p99)</th><th>Events</th><th>First 4 / last 4 winters</th></tr></thead><tbody>` +
-    Object.entries(h.towns).map(([t, r]) => `<tr><td>${esc(t)}</td><td>${esc(r.river)}</td><td>${r.gridCell.map(x => x.toFixed(3)).join(", ")}</td><td>${RW.fmt(r.mean)}</td><td>${RW.fmt(r.p95)}</td><td>${RW.fmt(r.p99)}</td><td>${r.events}</td><td>${r.first4Winters} / ${r.last4Winters}</td></tr>`).join("") + "</tbody>";
+    <h4>By winter</h4>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Town</th><th>Total</th><th>First 4</th><th>Last 4</th>${Object.keys(s.rows[0].winters).map(w => `<th>${esc(w)}</th>`).join("")}</tr></thead><tbody>${s.rows.map(r => `<tr><td>${esc(r.town)}</td><td class="pk">${r.events}</td><td>${r.first4}</td><td>${r.last4}</td>${Object.values(r.winters).map(w => `<td>${w.events || "·"}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+    <p class="small">An event = a run of days in a row at or above the town's flood mark, between 1 October and 31 March. First four winters = 2016/17–2019/20, last four = 2021/22–2024/25. Source: history-summary.json (Open-Meteo / GloFAS, 2016–2025).</p>`;
+  $("histtbl").innerHTML = `<thead><tr><th>Town</th><th>River</th><th>OPW gauge (waterlevel.ie)</th><th>Model point used</th><th>Distance</th><th>10-yr average</th><th>High mark (p95)</th><th>Flood mark (p99)</th><th>Events</th><th>First 4 / last 4</th></tr></thead><tbody>` +
+    Object.entries(h.towns).map(([t, r]) => { const g = GAUGES[t]; return `<tr><td>${esc(t)}</td><td>${esc(r.river)}</td><td>${g ? esc(g.ref + " " + g.name) : "–"}</td><td>${r.gridCell.map(x => x.toFixed(3)).join(", ")}</td><td>${g ? kmBetween(g.ll, r.gridCell).toFixed(1) + " km" : "–"}</td><td>${RW.fmt(r.mean)}</td><td>${RW.fmt(r.p95)}</td><td>${RW.fmt(r.p99)}</td><td>${r.events}</td><td>${r.first4Winters} / ${r.last4Winters}</td></tr>`; }).join("") +
+    `</tbody><caption class="small" style="caption-side:bottom;text-align:left;padding-top:6px">Flows in m³/s. The model point is the Open-Meteo grid cell on the named river; the cell under some town centres sat on a small stream (e.g. Fermoy 0.3 m³/s), so the river cell beside the town was used. Model flows read lower than gauges, but the forecast and the marks come from the same point, so each comparison is like with like.</caption>`;
   $("photocredits").innerHTML = [...EXTRA_CREDITS, ...Object.entries(PHOTOS).map(([t, p]) => ({ what: t, ...p }))].map(p => `<li>${esc(p.what)}: <a href="https://commons.wikimedia.org/wiki/${p.page}" target="_blank" rel="noopener">${esc(p.by)}</a>, ${esc(p.lic)}</li>`).join("");
 }
 function renderWarnings(d) {
@@ -736,6 +783,8 @@ function renderMap(p) {
   for (const t of p.towns) {
     const h = HISTORY.towns[t.town]; if (!h) continue;
     L.circleMarker(h.gridCell, { radius: 4, color: "#0284c7", weight: 2, fillColor: "#fff", fillOpacity: 1 }).addTo(MAPLAYER).bindTooltip(`${t.town}: river point used`);
+    const g = GAUGES[t.town];
+    if (g) L.circleMarker(g.ll, { radius: 3, color: "#334155", weight: 1, fillColor: "#334155", fillOpacity: 1 }).addTo(MAPLAYER).bindTooltip(`OPW gauge ${g.ref} ${g.name} (${kmBetween(g.ll, h.gridCell).toFixed(1)} km from the point used)`);
     L.circleMarker(h.townLatLon, { radius: 8, color: "#fff", weight: 3, fillColor: col[lvlCode(t)], fillOpacity: 1 }).addTo(MAPLAYER)
       .bindTooltip(`${t.town}: ${lvlLabel(t)}`, { permanent: lvlCode(t) !== "N", direction: "right" });
   }
